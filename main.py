@@ -3,8 +3,8 @@ from maze import maze
 
 screenWidth = 800
 screenHeight = 600
-button_start = None
-button_exit = None
+button_start: pygame.Rect
+button_exit: pygame.Rect
 pygame.init()
 
 screen = pygame.display.set_mode((screenWidth, screenHeight))
@@ -36,14 +36,17 @@ def draw_maze():
 def draw_startMenu():
     global screenHeight, screenWidth, screen, button_start, button_exit
 
-    btnWidth = int(screenWidth/10)
+    btnWidth = int(screenWidth / 10)
     btnHeight = int(screenHeight / 10)
 
-    button_start = pygame.Rect(int(screenWidth * 0.5 - btnWidth * 0.5), int(screenHeight * 0.33 - btnHeight * 0.5), btnWidth, btnHeight)
-    button_exit = pygame.Rect(int(screenWidth * 0.5 - btnWidth * 0.5), int(screenHeight * 0.66 - btnHeight * 0.5), btnWidth, btnHeight)
+    button_start = pygame.Rect(int(screenWidth * 0.5 - btnWidth * 0.5), int(screenHeight * 0.33 - btnHeight * 0.5),
+                               btnWidth, btnHeight)
+    button_exit = pygame.Rect(int(screenWidth * 0.5 - btnWidth * 0.5), int(screenHeight * 0.66 - btnHeight * 0.5),
+                              btnWidth, btnHeight)
 
     pygame.draw.rect(screen, pygame.Color('green'), button_start)
     pygame.draw.rect(screen, pygame.Color('red'), button_exit)
+
 
 draw_startMenu()
 
@@ -60,4 +63,3 @@ while running:
                 running = False
 
     pygame.display.update()
-
