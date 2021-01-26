@@ -1,5 +1,4 @@
 import pygame
-from maze import maze
 
 screenWidth = 800
 screenHeight = 600
