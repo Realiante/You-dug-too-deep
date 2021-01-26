@@ -4,9 +4,14 @@ import pygame
 
 
 class MyTestCase(unittest.TestCase):
+
     def test_load_img_gob_preview(self):
         test_img = resources.load_img("character/goblin/_preview.png")
         self.assertEqual((16, 16), test_img.get_size())
+
+    def test_load_img_dir_floor(self):
+        floor_images = resources.load_img_dir("tex/floor")
+        print(floor_images)
 
     def test_load_scheme_wasd(self):
         test_scheme_wasd = resources.load_scheme("wasd")

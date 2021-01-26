@@ -1,13 +1,26 @@
 import pygame
 import pygame.constants as constants
 import xml.dom.minidom as parser
-import itertools
+from itertools import repeat
+from os import walk
 
 rb = "resources"
+img_dir = f"{rb}/img/"
 
 
 def load_img(image_path: str):
-    return pygame.image.load(f"{rb}/img/{image_path}")
+    return pygame.image.load(f"{img_dir}{image_path}")
+
+
+def load_img_dir(dir: str):
+    dir_path = f"{img_dir}{dir}"
+    non, non, file_names = next(walk(dir_path))
+    file_names.sort()
+    images = []
+    for file in file_names:
+        file_path = f"{dir_path}/{file}"
+        images.append(pygame.image.load(file_path))
+    return (*images,)  # unwraps the list into a tuple
 
 
 def load_scheme(scheme_name: str):
@@ -40,6 +53,6 @@ def load_prebuilt_pattern(prebuilt_name: str):
     for line in pattern:
         correction = max_len - len(line)
         if correction > 0:
-            line.extend(list(itertools.repeat("w", correction)))
+            line.extend(list(repeat("w", correction)))
 
-    return pattern
+    return tuple(map(tuple, pattern))  # wrapping every sublist into a tuple, then wrapping the list
