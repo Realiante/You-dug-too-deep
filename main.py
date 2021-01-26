@@ -12,8 +12,6 @@ while running:
     for event in events:
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = event.pos
 
     if gui.state == States.main_menu:
         gui.listen_startMenu(events)
@@ -23,5 +21,6 @@ while running:
         gui.listen_options(events)
         if gui.state == States.options_menu:
             gui.display_options()
-
+    elif gui.state == States.game_page:
+        display_maze()
     pygame.display.update()

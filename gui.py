@@ -1,8 +1,8 @@
+import math
 from enum import Enum
 
 import pygame
 import pygame_widgets
-from maze import maze
 
 menu_button_start: pygame_widgets.Button
 menu_button_options: pygame_widgets.Button
@@ -20,13 +20,24 @@ options_slider_protection: pygame_widgets.Slider
 options_label_protection: pygame_widgets.Button
 options_button_back: pygame_widgets.Button
 
+maze_label_player1_speed: pygame_widgets.Button
+maze_label_player2_speed: pygame_widgets.Button
+maze_label_player1_protection: pygame_widgets.Button
+maze_label_player2_protection: pygame_widgets.Button
+maze_label_player1_health: pygame_widgets.Button
+maze_label_player2_health: pygame_widgets.Button
+maze_rect_player1_gameCover: pygame.Rect
+maze_rect_player2_gameCover: pygame.Rect
+maze_stack_player1_items = [None] * 7
+maze_stack_player2_items = [None] * 7
+
 pygame.init()
 
 States = Enum('States', 'main_menu game_page options_menu')
 
 state = None
 
-screenWidth = 1200
+screenWidth = 1600
 screenHeight = 900
 
 screen = pygame.display.set_mode((screenWidth, screenHeight))
@@ -35,21 +46,61 @@ screen.fill(pygame.Color('gray16'))
 
 
 def draw_maze():
-    global screenHeight, screenWidth, screen, state
+    global screenHeight, screenWidth, screen, state, maze_label_player1_speed, maze_label_player2_speed, \
+        maze_label_player1_protection, maze_label_player2_protection, maze_label_player1_health, \
+        maze_label_player2_health, maze_rect_player1_gameCover, maze_rect_player2_gameCover, maze_stack_player1_items, \
+        maze_stack_player2_items
+
     state = States.game_page
+
     screen.fill(pygame.Color('gray16'))
-    smth = int(screenHeight * 0.9 / len(maze))
-    # give this a name lol
-    for x in range(len(maze)):
-        for y in range(len(maze[x])):
-            if maze[y][x] == 1:
-                pygame.draw.rect(screen, pygame.Color('black'),
-                                 pygame.Rect(int(screenWidth * 0.15) + (x * smth),
-                                             int(screenHeight * 0.05) + (y * smth), smth - 1, smth - 1))
-            elif maze[y][x] == 0:
-                pygame.draw.rect(screen, pygame.Color('white'),
-                                 pygame.Rect(int(screenWidth * 0.15) + (x * smth),
-                                             int(screenHeight * 0.05) + (y * smth), smth - 1, smth - 1))
+
+    spacing = [0.1, 0.6]
+
+    maze_label_player1_speed = pygame_widgets.Button(screen, 50, 50, 150, 150,
+                                                     text='SPD: ' + str(options_slider_speed.getValue()),
+                                                     radius=100,
+                                                     onClick=lambda: {})
+    maze_label_player2_speed = pygame_widgets.Button(screen, 850, 50, 150, 150,
+                                                     text='SPD: ' + str(options_slider_speed.getValue()),
+                                                     radius=100,
+                                                     onClick=lambda: {})
+    maze_label_player1_protection = pygame_widgets.Button(screen, 200, 50, 150, 150,
+                                                          text='DEF: ' + str(options_slider_protection.getValue()),
+                                                          radius=100,
+                                                          onClick=lambda: {})
+    maze_label_player2_protection = pygame_widgets.Button(screen, 1000, 50, 150, 150,
+                                                          text='DEF: ' + str(options_slider_protection.getValue()),
+                                                          radius=100,
+                                                          onClick=lambda: {})
+    maze_label_player1_health = pygame_widgets.Button(screen, 350, 50, 400, 150,
+                                                      text='Player 1 HP',
+                                                      inactiveColour='DarkGreen',
+                                                      onClick=lambda: {})
+    maze_label_player2_health = pygame_widgets.Button(screen, 1150, 50, 400, 150,
+                                                      text='Player 2 HP',
+                                                      inactiveColour='DarkGreen',
+                                                      onClick=lambda: {})
+    maze_rect_player1_gameCover = pygame.Rect(50, 200, 700, 550)
+    maze_rect_player2_gameCover = pygame.Rect(850, 200, 700, 550)
+    for i in range(7):
+        maze_stack_player1_items[i] = pygame.Rect(50+100*i, 750, 100, 100)
+        maze_stack_player2_items[i] = pygame.Rect(850+100*i, 750, 100, 100)
+
+
+def display_maze():
+    maze_label_player1_speed.draw()
+    maze_label_player2_speed.draw()
+    maze_label_player1_protection.draw()
+    maze_label_player2_protection.draw()
+    maze_label_player1_health.draw()
+    maze_label_player2_health.draw()
+    pygame.draw.rect(screen, 'Gray80', maze_rect_player1_gameCover)
+    pygame.draw.rect(screen, 'Gray80', maze_rect_player2_gameCover)
+    for i in range(7):
+        pygame.draw.rect(screen, 'Gray60', maze_stack_player1_items[i])
+        pygame.draw.line()
+        pygame.draw.rect(screen, 'Gray60', maze_stack_player2_items[i])
 
 
 def draw_startMenu():
@@ -142,6 +193,9 @@ def draw_options():
                                                 int(screenHeight * spacing[6] - boxHeight * 0.5), boxWidth, boxHeight,
                                                 text='Back',
                                                 onClick=lambda: draw_startMenu())
+
+
+draw_options()
 
 
 def update_options():
