@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<control_scheme
+        up="UP"
+        down="DOWN"
+        left="LEFT"
+        right="RIGHT"
+        action="ENTER"
+        switch="RCTRL"
+/>
