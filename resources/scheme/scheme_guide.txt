@@ -1,0 +1,11 @@
+<control_scheme
+        up=""
+        down=""
+        left=""
+        right=""
+        action=""
+        switch=""
+/>
+
+when read by resources.load_scheme() in the produced immutable collection-
+0:up, 1:down, 2:left, 3:right, 4:action 5:switch

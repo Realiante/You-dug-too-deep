@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<control_scheme
+        up="KP8"
+        down="KP5"
+        left="KP4"
+        right="KP6"
+        action="KP_ENTER"
+        switch="KP_0"
+/>
