@@ -24,11 +24,12 @@ class MyTestCase(unittest.TestCase):
 
     def test_load_prebuilt_test(self):
         test_pattern = resources.load_prebuilt_pattern("maze_test")
-        self.assertEqual("end", test_pattern[0][0])
-        self.assertEqual("f", test_pattern[1][0])
-        self.assertEqual("key", test_pattern[2][6])
-        self.assertEqual("start", test_pattern[6][1])
+        print(test_pattern)
+        self.assertEqual(["f", "end"], test_pattern[0][0])
+        self.assertEqual(["f"], test_pattern[1][0])
+        self.assertEqual(["f", "key"], test_pattern[2][6])
+        self.assertEqual(["start"], test_pattern[6][1])
+        self.assertEqual(["f"], test_pattern[9][9])
 
-
-if __name__ == '__main__':
-    unittest.main()
+        if __name__ == '__main__':
+            unittest.main()

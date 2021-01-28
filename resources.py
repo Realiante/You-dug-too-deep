@@ -2,7 +2,8 @@ import pygame
 import pygame.constants as constants
 import xml.dom.minidom as parser
 from itertools import repeat
-from os import walk
+from os import listdir
+from os.path import isfile, join
 
 rb = "resources"
 img_dir = f"{rb}/img/"
@@ -14,7 +15,7 @@ def load_img(image_path: str):
 
 def load_img_dir(dir: str):
     dir_path = f"{img_dir}{dir}"
-    non, non, file_names = next(walk(dir_path))
+    file_names = [f for f in listdir(dir_path) if isfile(join(dir_path, f))]
     file_names.sort()
     images = []
     for file in file_names:
@@ -40,19 +41,28 @@ def load_scheme(scheme_name: str):
 
 def load_prebuilt_pattern(prebuilt_name: str):
     file_path = f"{rb}/prebuilt/{prebuilt_name}.txt"
-    # loading the pattern from file path
     pattern = []
+
     with open(file_path) as file:
         lines = file.readlines()
-        for line in lines:
-            line.strip(" ,")
-            pattern.append(line.split(','))
+    for line in lines:
+        line = line.strip(' ,\n')
+        line_layers = line.split(',')
+        p_layers = []
+        for layers in line_layers:
+            layers = layers.split(':')
+            p_layers.append(layers)
+        pattern.append(p_layers)
 
-    # correcting the short pattern lines by making them equal to the longest in length
-    max_len = len(max(pattern))
+    # correcting the short pattern lines by making them equal to the longest line/column in length
+    max_len = len(max(pattern, key=len))
     for line in pattern:
         correction = max_len - len(line)
         if correction > 0:
             line.extend(list(repeat("w", correction)))
 
-    return tuple(map(tuple, pattern))  # wrapping every sublist into a tuple, then wrapping the list
+    # correcting the missing pattern rows by copying the last line to form a square grid
+    while max_len > len(pattern):
+        pattern.append(repeat("w", max_len))
+
+    return pattern
