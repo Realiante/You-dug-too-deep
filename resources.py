@@ -59,10 +59,10 @@ def load_prebuilt_pattern(prebuilt_name: str):
     for line in pattern:
         correction = max_len - len(line)
         if correction > 0:
-            line.extend(list(repeat("w", correction)))
+            line.extend([*repeat(["w"], correction)])
 
     # correcting the missing pattern rows by copying the last line to form a square grid
     while max_len > len(pattern):
-        pattern.append(repeat("w", max_len))
+        pattern.append([*repeat(["w"], max_len)])
 
     return pattern
