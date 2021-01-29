@@ -15,11 +15,9 @@ while running:
             running = False
 
     if gui.state == States.main_menu:
-        gui.listen_start_menu(events)
-        if gui.state == States.main_menu:
-            gui.display_start_menu()
+        pass  # todo
     elif gui.state == States.options_menu:
         gui.display_options()
     elif gui.state == States.game_page:
-        gui.display_maze()
+        pass  # todo
     pygame.display.update()
