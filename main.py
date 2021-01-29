@@ -3,7 +3,7 @@ from gui import *
 
 running = True
 
-draw_startMenu()
+gui.draw_startMenu()
 
 gui.state = States.main_menu
 
@@ -18,9 +18,7 @@ while running:
         if gui.state == States.main_menu:
             gui.display_startMenu()
     elif gui.state == States.options_menu:
-        gui.listen_options(events)
-        if gui.state == States.options_menu:
-            gui.display_options()
+        gui.display_options()
     elif gui.state == States.game_page:
         display_maze()
     pygame.display.update()
