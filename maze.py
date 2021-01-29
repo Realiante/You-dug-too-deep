@@ -48,33 +48,36 @@ class Maze:
         self.property_grid = property_grid
 
 
-def __effect_key(maze: Maze, character: Character, *args):
+def __effect_key(maze: Maze, character: Character, *pos):
     character.can_exit = True
     maze.dirty = True
 
 
-def __effect_win(maze: Maze, character: Character, *args):
+def __effect_win(maze: Maze, character: Character, *pos):
     character.win = True
 
 
-def __effect_damage_light(maze: Maze, character: Character, *args):
+def __effect_damage_light(maze: Maze, character: Character, *pos):
     character.take_damage(1)
 
 
-def __effect_on_set_player(maze: Maze, character: Character, *args):
-    maze.player_pos = args[0], args[1]
+def __effect_on_set_player(maze: Maze, character: Character, *pos):
+    maze.player_pos = pos[0], pos[1]
 
 
-def __effect_on_set_key(maze: Maze, character: Character, *args):
-    maze.key_pos = args[0], args[1]
+def __effect_on_set_key(maze: Maze, character: Character, *pos):
+    maze.key_pos = pos[0], pos[1]
 
 
-def __effect_on_set_end(maze: Maze, character: Character, *args):
-    maze.end_pos = args[0], args[1]
+def __effect_on_set_end(maze: Maze, character: Character, *pos):
+    maze.end_pos = pos[0], pos[1]
 
 
 tile_dict = {
-    # [0] collection of possible textures, [1] path cost mod (0 is regular, >10 is considered impassable) [2] tile on step, [3] tile on set
+    # [0] collection of possible textures,
+    # [1] path cost mod (0 is regular, >10 is considered impassable),
+    # [2] tile on step event (arguments: Maze, Character, pos(y:int , x:int)),
+    # [3] tile on set event (arguments: Maze, Character, pos(y:int , x:int))
     'f': (floor_textures, 0, None, None),
     'start': (floor_textures, 0, None, __effect_on_set_player),
     'w': (wall_textures, 999, None, None),
