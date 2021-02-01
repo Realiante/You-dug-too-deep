@@ -18,18 +18,7 @@ print()
 def draw_maze():
     global screenHeight, screenWidth, screen
     screen.fill(pygame.Color('gray16'))
-    smth = int(screenHeight * 0.9 / len(maze))
-    # give this a name lol
-    for x in range(len(maze)):
-        for y in range(len(maze[x])):
-            if maze[y][x] == 1:
-                pygame.draw.rect(screen, pygame.Color('black'),
-                                 pygame.Rect(int(screenWidth * 0.15) + (x * smth),
-                                             int(screenHeight * 0.05) + (y * smth), smth - 1, smth - 1))
-            elif maze[y][x] == 0:
-                pygame.draw.rect(screen, pygame.Color('white'),
-                                 pygame.Rect(int(screenWidth * 0.15) + (x * smth),
-                                             int(screenHeight * 0.05) + (y * smth), smth - 1, smth - 1))
+
 
 
 def draw_startMenu():
