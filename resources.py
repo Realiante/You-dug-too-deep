@@ -1,3 +1,4 @@
+import os
 import pygame
 import pygame.constants as constants
 import xml.dom.minidom as parser
@@ -7,7 +8,7 @@ rb = "resources"
 
 
 def load_img(image_path: str):
-    return pygame.image.load(f"{rb}/img/{image_path}")
+    return pygame.image.load(os.path.join(f"{rb}/img/{image_path}"))
 
 
 def load_scheme(scheme_name: str):
