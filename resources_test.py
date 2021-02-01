@@ -34,8 +34,8 @@ class MyTestCase(unittest.TestCase):
     def test_load_broken_prebuilt(self):
         test_pattern = resources.load_prebuilt_pattern("test/broken")
         print(test_pattern)
-        self.assertEqual(["f"], test_pattern[0][0])
-        self.assertEqual(["f"], test_pattern[0][7])
+        self.assertEqual(["f", "f"], test_pattern[0][0])
+        self.assertEqual(["f", "f", "w"], test_pattern[0][7])
         self.assertEqual(["f", "key"], test_pattern[1][1])
         self.assertEqual(["w"], test_pattern[7][0])
         self.assertEqual(["w"], test_pattern[7][7])
