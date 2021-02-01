@@ -1,87 +1,44 @@
 from typing import List
 from random import choice
-from character import Character
-import resources
-import pygame
-
-pygame.init()
-
-floor_textures = resources.load_img_dir("tex/floor")
-wall_textures = resources.load_img_dir("tex/wall")
-key_textures = (resources.load_img("tex/key.png"),)
-door_textures = (resources.load_img("tex/door.png"),)
-trap_textures = (resources.load_img("tex/trap.png"),)
+from tilescript import dictionary as tile_objects
 
 
-class Maze:
+class MazeData:
 
     def __init__(self, pattern: List[List[List[str]]]):
         self.dirty = True  # does the algorithm need to recalculate a path for this maze
         self.key_pos = 0, 0
         self.end_pos = 0, 0
         self.player_pos = 0, 0
-        draw_grid = []  # 3d collection with references to background images and layers.
-        property_grid = []  # 2d collection where each element stores path costs and the tile's on_step effect
+
+        self.grid = pattern.copy()
+        self.__uniques = []
+
         y = -1
         for p_row in pattern:
-            y += 1
             x = -1
-            dg_row = []
-            pg_row = []
+            y += 1
             for p_tile in p_row:
+                layer = -1
                 x += 1
-                draw_tile = []
-                grid_tile = [999, None]
+                base_claimed = False
                 for p_layer in p_tile:
-                    mapping = tile_dict.get(p_layer)
-                    draw_tile.append(choice(mapping[0]))
-                    grid_tile[0] = min(grid_tile[0], mapping[1])
-                    if mapping[3] is not None:
-                        mapping[3](self, None, y, x)
-                    if mapping[2] is not None:
-                        grid_tile[1] = mapping[2]
-                dg_row.append(draw_tile)
-                pg_row.append(grid_tile)
-            draw_grid.append(dg_row)
-            property_grid.append(pg_row)
-        self.draw_grid = draw_grid
-        self.property_grid = property_grid
+                    layer += 1
+                    img, cost, on_step, on_add, base, unique = tile_objects.get(p_layer)
 
+                    # base check
+                    if base:
+                        if base_claimed or layer != 0:
+                            self.grid[y][x].remove(p_layer)
+                            break
+                        base_claimed = True
 
-def __effect_key(maze: Maze, character: Character, *pos):
-    character.can_exit = True
-    maze.dirty = True
+                    # uniqueness check
+                    if unique:
+                        if p_layer in self.__uniques:
+                            self.grid[y][x].remove(p_layer)
+                            break
+                        self.__uniques.append(p_layer)
 
-
-def __effect_win(maze: Maze, character: Character, *pos):
-    character.win = True
-
-
-def __effect_damage_light(maze: Maze, character: Character, *pos):
-    character.take_damage(1)
-
-
-def __effect_on_set_player(maze: Maze, character: Character, *pos):
-    maze.player_pos = pos[0], pos[1]
-
-
-def __effect_on_set_key(maze: Maze, character: Character, *pos):
-    maze.key_pos = pos[0], pos[1]
-
-
-def __effect_on_set_end(maze: Maze, character: Character, *pos):
-    maze.end_pos = pos[0], pos[1]
-
-
-tile_dict = {
-    # [0] collection of possible textures,
-    # [1] path cost mod (0 is regular, >10 is considered impassable),
-    # [2] tile on step event (arguments: Maze, Character, pos(y:int , x:int)),
-    # [3] tile on set event (arguments: Maze, Character, pos(y:int , x:int))
-    'f': (floor_textures, 0, None, None),
-    'start': (floor_textures, 0, None, __effect_on_set_player),
-    'w': (wall_textures, 999, None, None),
-    'key': (key_textures, 0, __effect_key, __effect_on_set_key),
-    'end': (door_textures, 0, __effect_win, __effect_on_set_end),
-    'trap': (door_textures, 2, __effect_damage_light, None)
-}
+                    if on_add is not None:
+                        on_add(self, None, (x, y))

@@ -4,7 +4,7 @@ f,w,w,w,f,f,f:key,f,w,w
 f,w,f,w,f,w,w,trap,w,f
 f,f,f,w,w,f,f,f,f,w
 f,w,f,f,w,f,w,f,w,f
-w,start,w,f,f,trap,f,f
+w,f:start,w,f,f,trap,f,f
 w,f,trap,f,f,f,w,w,w,w
 w,f,f,f,f,f,trap,f,f,w
 w,w,w,w,w,w,w,w,f,f

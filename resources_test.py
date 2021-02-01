@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(["f", "end"], test_pattern[0][0])
         self.assertEqual(["f"], test_pattern[1][0])
         self.assertEqual(["f", "key"], test_pattern[2][6])
-        self.assertEqual(["start"], test_pattern[6][1])
+        self.assertEqual(["f", "start"], test_pattern[6][1])
         self.assertEqual(["f"], test_pattern[9][9])
 
     def test_load_broken_prebuilt(self):
