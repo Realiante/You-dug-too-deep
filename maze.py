@@ -14,16 +14,13 @@ class MazeData:
         self.grid = pattern.copy()
         self.__uniques = []
 
-        y = -1
+        y = 0
         for p_row in pattern:
-            x = -1
-            y += 1
+            x = 0
             for p_tile in p_row:
-                layer = -1
-                x += 1
+                layer = 0
                 base_claimed = False
                 for p_layer in p_tile:
-                    layer += 1
                     img, cost, on_step, on_add, base, unique = tile_objects.get(p_layer)
 
                     # base check
@@ -42,3 +39,6 @@ class MazeData:
 
                     if on_add is not None:
                         on_add(self, None, (x, y))
+                    layer += 1
+                x += 1
+            y += 1
