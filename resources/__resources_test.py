@@ -3,9 +3,9 @@
 """
 
 import unittest
-import images
-import levels
-import schemes
+import resources.images as images
+import resources.levels as levels
+import resources.schemes as schemes
 import os
 
 
