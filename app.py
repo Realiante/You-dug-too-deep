@@ -1,30 +1,32 @@
-import background
+"""
+@author: daniel.fedotov
+@author: vel.krol
+"""
+
 import pygame
+import thorpy
+import gui
 
 #  Initialisation script starts
+
 pygame.init()
 display = pygame.display.Info()
-pygame.display.set_icon(pygame.image.load("ico.png"))
-pygame.display.set_caption("You-Dug-Too-Deep")
 display_size = (display.current_w, display.current_h)
 flags = pygame.HWSURFACE | pygame.DOUBLEBUF
-screen = pygame.display.set_mode(size=display_size, flags=flags)
+application = thorpy.Application(size=display_size, caption="You-Dug-Too-Deep", center=True, flags=flags)
+pygame.display.set_icon(pygame.image.load("ico.png"))
 
 # Initialisation script ends
 
-dirty = True  # does the screen need to be updated
 running = True
 
+gui.init()
 # Main game loop
 while running:
-    if dirty:
-        screen.fill((0, 155, 0))
-        screen.blit(background.get(display_size), (0, 0))
-        pygame.display.flip()
-        dirty = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 # Main game loop
 
+pygame.display.quit()
 pygame.quit()
