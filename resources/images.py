@@ -26,7 +26,7 @@ def load_directory(directory: str):
     file_names = resources.files.list_files(dir_path, img_formats)
     images = []
     for file_name in file_names:
-        file_path = f"{directory}/{file_name}"
+        file_path = file_name[len(img_dir):]
         images.append(load_img(file_path))
     return (*images,)  # unwraps the list into a tuple
 

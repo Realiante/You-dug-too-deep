@@ -25,7 +25,7 @@ class MazeData:
                 layer = 0
                 base_claimed = False
                 for p_layer in p_tile:
-                    img, cost, on_step, on_add, base, unique = tile_objects.update(p_layer)
+                    img, cost, on_step, on_add, base, unique = tile_objects[p_layer]
 
                     # base check
                     if base:
