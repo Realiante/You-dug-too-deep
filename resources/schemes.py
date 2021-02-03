@@ -6,7 +6,7 @@ import xml.dom.minidom as parser
 import os.path
 import pygame.constants as constants
 
-__scheme_dir = f"resources/scheme/"
+scheme_dir = f"resources/scheme/"
 
 
 def load_scheme(scheme_name: str):

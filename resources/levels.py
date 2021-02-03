@@ -5,7 +5,7 @@
 from os.path import abspath
 from itertools import repeat
 
-__mazes_dir = f"resources/levels/"
+mazes_dir = f"resources/levels/"
 
 
 def load_pattern(prebuilt_name: str):
