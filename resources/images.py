@@ -23,7 +23,7 @@ def load_img(image_path: str):
 
 def load_directory(directory: str):
     dir_path = f"{img_dir}{directory}"
-    file_names = resources.files.list_files(dir_path, __img_formats)
+    file_names = resources.files.list_files(dir_path, img_formats)
     images = []
     for file_name in file_names:
         file_path = f"{directory}/{file_name}"
