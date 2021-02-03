@@ -5,7 +5,7 @@ import resources
 
 class MyTestCase(unittest.TestCase):
     def test_maze_class_init(self):
-        loaded = maze.MazeData(resources.load_prebuilt_pattern("test/micro"))
+        loaded = maze.MazeData(resources.mazes.load_pattern("test/micro"))
         self.assertEqual(True, loaded.dirty)
         self.assertEqual((0, 0), loaded.key_pos)
         self.assertEqual(["f"], loaded.grid[0][1])
