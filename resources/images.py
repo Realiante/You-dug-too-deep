@@ -16,7 +16,7 @@ __img_dict = {}
 # ensures that only one instance of the same image is kept in memory
 def load_img(image_path: str):
     if image_path not in __img_dict.keys():
-        image = pygame.image.load(os.path.abspath(f"{img_dir}{image_path}"))
+        image = pygame.image.load(f"{img_dir}{image_path}")
         __img_dict[image_path] = image
     return __img_dict[image_path]
 

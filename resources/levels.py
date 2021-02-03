@@ -9,7 +9,7 @@ mazes_dir = f"resources/levels/"
 
 
 def load_pattern(prebuilt_name: str):
-    file_path = abspath(f"{mazes_dir}{prebuilt_name}.txt")
+    file_path = f"{mazes_dir}{prebuilt_name}.txt"
     pattern = []
 
     with open(file_path) as file:

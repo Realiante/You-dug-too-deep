@@ -10,7 +10,7 @@ scheme_dir = f"resources/scheme/"
 
 
 def load_scheme(scheme_name: str):
-    xml_doc = minidom.parse(os.path.abspath(f"{scheme_dir}{scheme_name}.xml"))
+    xml_doc = minidom.parse(f"{scheme_dir}{scheme_name}.xml")
     control_scheme = xml_doc.getElementsByTagName("control_scheme")[0]
 
     k = "K_"
