@@ -1,3 +1,7 @@
+"""
+@author: daniel.fedotov
+"""
+
 import xml.dom.minidom as parser
 import os.path
 import pygame.constants as constants

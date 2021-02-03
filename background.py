@@ -1,3 +1,7 @@
+"""
+@author: daniel.fedotov
+"""
+
 import pygame
 import resources.images as images
 
@@ -18,9 +22,9 @@ def __refill(display_size):
         height_index += bgt_h
 
 
-def get(display_size):
+def update(display_size, application):
     global dirty
     if dirty:
         __refill(display_size)
         dirty = False
-    return bg_surface
+    application.blit(bg_surface, (0, 0))

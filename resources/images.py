@@ -1,3 +1,7 @@
+"""
+@author: daniel.fedotov
+"""
+
 import os
 import random
 

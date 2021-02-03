@@ -1,3 +1,7 @@
+"""
+@author: daniel.fedotov
+"""
+
 from os.path import abspath
 from itertools import repeat
 

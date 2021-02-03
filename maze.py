@@ -1,3 +1,7 @@
+"""
+@author: daniel.fedotov
+"""
+
 from typing import List
 from random import choice
 from tilescript import dictionary as tile_objects
@@ -21,7 +25,7 @@ class MazeData:
                 layer = 0
                 base_claimed = False
                 for p_layer in p_tile:
-                    img, cost, on_step, on_add, base, unique = tile_objects.get(p_layer)
+                    img, cost, on_step, on_add, base, unique = tile_objects.update(p_layer)
 
                     # base check
                     if base:

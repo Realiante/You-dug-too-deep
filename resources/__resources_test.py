@@ -1,3 +1,7 @@
+"""
+@author: daniel.fedotov
+"""
+
 import unittest
 import images
 import levels
