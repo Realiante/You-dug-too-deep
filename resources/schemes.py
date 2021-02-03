@@ -2,7 +2,7 @@
 @author: daniel.fedotov
 """
 
-import xml.dom.minidom as parser
+import xml.dom.minidom as xml
 import os.path
 import pygame.constants as constants
 
@@ -10,7 +10,7 @@ scheme_dir = f"resources/scheme/"
 
 
 def load_scheme(scheme_name: str):
-    xml_doc = parser.parse(os.path.abspath(f"{__scheme_dir}{scheme_name}.xml"))
+    xml_doc = xml.parse(os.path.abspath(f"{__scheme_dir}{scheme_name}.xml"))
     control_scheme = xml_doc.getElementsByTagName("control_scheme")[0]
 
     k = "K_"
