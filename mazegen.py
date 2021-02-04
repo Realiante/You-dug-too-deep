@@ -238,13 +238,13 @@ while (walls):
         if (wall[0] == rand_wall[0] and wall[1] == rand_wall[1]):
             walls.remove(wall)
 
-# Mark the remaining unvisited cells as walls
+
 for i in range(0, height):
     for j in range(0, width):
         if (maze[i][j] == null):
             maze[i][j] = wall
 
-# Set entrance and exit
+
 while True:
     i = random.randrange(width)
     if maze[1][i] == floor:
@@ -266,7 +266,7 @@ visitedEnd = []
 queueEnd = []
 
 
-# top, left, steps from node
+
 
 def bfs(visitedStep, queueStep, node):
     queue = [node]
