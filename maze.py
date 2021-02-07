@@ -63,6 +63,12 @@ class MazeBuilder:
     def __init__(self, h, w):
         self.height = h
         self.width = w
+        self.maze = []  # So interpreter will know maze is a list
+        self.generate_maze()
+        
+        
+    def generate_maze(self):
+        self.maze = []  # Clearing the maze
         for _ in range(0, self.height):
             line = []
             for _ in range(0, self.width):
@@ -78,19 +84,18 @@ class MazeBuilder:
             starting_width += 1
         if starting_width == self.width - 1:
             starting_width -= 1
-
+            
         self.maze[starting_height][starting_width] = self.__floor
         self.__walls.append([starting_height - 1, starting_width])
         self.__walls.append([starting_height, starting_width - 1])
         self.__walls.append([starting_height, starting_width + 1])
         self.__walls.append([starting_height + 1, starting_width])
-
+        
         # Denote walls in maze
         self.maze[starting_height - 1][starting_width] = self.__wall
         self.maze[starting_height][starting_width - 1] = self.__wall
         self.maze[starting_height][starting_width + 1] = self.__wall
         self.maze[starting_height + 1][starting_width] = self.__wall
-
         self.generate_path()
 
     def __str__(self):
