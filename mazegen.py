@@ -97,7 +97,6 @@ def check_left_wall(rand_wall):
             upper_wall(rand_wall)
             # Bottom cell
             bottom_wall(rand_wall)
-
             # Leftmost cell
             left_wall(rand_wall)
 
@@ -257,79 +256,7 @@ def create_start():
             break
 
 
-visitedStartStep = []
-visitedStart = []
-queueStart = []
-
-visitedEndStep = []
-visitedEnd = []
-queueEnd = []
-
-
-def bfs(visited_step, visited, queue_step, node):
-    queue = [node]
-    visited.append(node)
-    visited_step.append([node[0], node[1], 0])
-    queue_step.append([node[0], node[1], 0])
-    while queue:
-        s = queue.pop(0)
-        q = queue_step.pop(0)
-        for neighbour in surrounding_bfs(s):
-            if neighbour not in visited:
-                visited.append(neighbour)
-                visited_step.append([neighbour[0], neighbour[1], q[2] + 1])
-                queue.append(neighbour)
-                queue_step.append([neighbour[0], neighbour[1], q[2] + 1])
-    visited.pop(0)
-    visited_step.pop(0)
-
-
-def surrounding_bfs(node):
-    lst = []
-    if node[0] != 0 and maze[node[0] - 1][node[1]] == __floor:
-        lst.append([node[0] - 1, node[1]])
-    if node[1] != 0 and maze[node[0]][node[1] - 1] == __floor:
-        lst.append([node[0], node[1] - 1])
-    if node[0] != __height - 1 and maze[node[0] + 1][node[1]] == __floor:
-        lst.append([node[0] + 1, node[1]])
-    if node[1] != __width - 1 and maze[node[0]][node[1] + 1] == __floor:
-        lst.append([node[0], node[1] + 1])
-    return lst
-
-
-def remove_wall_around(node):
-    if node[0] > 1:
-        if maze[node[0] - 1][node[1]] == __wall and maze[node[0] - 2][node[1]] == __floor:
-            maze[node[0] - 1][node[1]] = __null
-            return
-    if node[0] < __height - 2:
-        if maze[node[0] + 1][node[1]] == __wall and maze[node[0] + 2][node[1]] == __floor:
-            maze[node[0] + 1][node[1]] = __null
-            return
-    if node[1] > 1:
-        if maze[node[0]][node[1] - 1] == __wall and maze[node[0]][node[1] - 2] == __floor:
-            maze[node[0]][node[1] - 1] = __null
-            return
-    if node[1] < __width - 2:
-        if maze[node[0]][node[1] + 1] == __wall and maze[node[0]][node[1] + 2] == __floor:
-            maze[node[0]][node[1] + 1] = __null
-
-
-generate_maze(5, 8)
-
-bfs(visitedStartStep, visitedStart, queueStart, [__height - 1, __startPoint])
-bfs(visitedEndStep, visitedEnd, queueEnd, [0, __endPoint])
-
-closeEnd = []
-closeStart = []
-
-for i in range(len(visitedStart)):
-    temp = visitedEnd.index(visitedStart[i])
-    print(visitedStartStep[i][2], " ", visitedEndStep[temp][2])
-    if visitedStartStep[i][2] > visitedEndStep[temp][2]:
-        closeEnd.append(visitedEndStep[temp])
-    else:
-        closeStart.append(visitedStartStep[i])
+generate_maze(8, 16)
 
 __str__()
 
