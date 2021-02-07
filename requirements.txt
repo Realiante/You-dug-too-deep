@@ -1,3 +1,4 @@
 pygame>=2.0.1
 thorpy==1.7
-NumPy == 1.19
+NumPy==1.19
+colorama==0.4.4
