@@ -50,7 +50,7 @@ class MazeBuilder:
     __floor = 'f'
     __start = 'start'
     __wall = 'w'
-    # __key = 'key' create a use for it in the future
+    # todo: __key = 'key' create a use for it in the future
     __end = 'end'
     __null = 'null'
 
