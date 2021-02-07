@@ -10,7 +10,6 @@ import os
 
 
 class SingleResourceCase(unittest.TestCase):
-    os.chdir("../")
 
     def test_load_img_gob_preview(self):
         test_img = images.load_img("character/goblin/_preview.png")
