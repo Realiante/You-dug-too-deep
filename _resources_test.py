@@ -1,30 +1,34 @@
+"""
+@author: daniel.fedotov
+"""
+
 import unittest
-import resources
-import pygame
+import resources.images as images
+import resources.levels as levels
+import resources.schemes as schemes
+import os
 
 
-class MyTestCase(unittest.TestCase):
+class SingleResourceCase(unittest.TestCase):
 
     def test_load_img_gob_preview(self):
-        test_img = resources.load_img("character/goblin/_preview.png")
+        test_img = images.load_img("character/goblin/_preview.png")
         self.assertEqual((16, 16), test_img.get_size())
 
     def test_load_img_dir_floor(self):
-        floor_images = resources.load_img_dir("tex/floor")
-        print(floor_images)
+        images.load_directory("tex/floor")
 
     def test_load_scheme_wasd(self):
-        test_scheme_wasd = resources.load_scheme("wasd")
-        self.assertEqual(119, test_scheme_wasd[0])
-        self.assertEqual(115, test_scheme_wasd[1])
-        self.assertEqual(97, test_scheme_wasd[2])
-        self.assertEqual(100, test_scheme_wasd[3])
-        self.assertEqual(32, test_scheme_wasd[4])
-        self.assertEqual(113, test_scheme_wasd[5])
+        test_scheme_wasd = schemes.load_scheme("wasd")
+        self.assertEqual(119, test_scheme_wasd.up)
+        self.assertEqual(115, test_scheme_wasd.down)
+        self.assertEqual(97, test_scheme_wasd.left)
+        self.assertEqual(100, test_scheme_wasd.right)
+        self.assertEqual(32, test_scheme_wasd.action)
+        self.assertEqual(113, test_scheme_wasd.switch)
 
     def test_load_prebuilt(self):
-        test_pattern = resources.load_prebuilt_pattern("maze_test")
-        print(test_pattern)
+        test_pattern = levels.load_pattern("maze_test")
         self.assertEqual(["f", "end"], test_pattern[0][0])
         self.assertEqual(["f"], test_pattern[1][0])
         self.assertEqual(["f", "key"], test_pattern[2][6])
@@ -32,7 +36,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(["f"], test_pattern[9][9])
 
     def test_load_broken_prebuilt(self):
-        test_pattern = resources.load_prebuilt_pattern("test/broken")
+        test_pattern = levels.load_pattern("test/broken")
         print(test_pattern)
         self.assertEqual(["f", "f"], test_pattern[0][0])
         self.assertEqual(["f", "f", "w"], test_pattern[0][7])
@@ -40,5 +44,5 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(["w"], test_pattern[7][0])
         self.assertEqual(["w"], test_pattern[7][7])
 
-        if __name__ == '__main__':
-            unittest.main()
+    if __name__ == '__main__':
+        unittest.main()

@@ -1,0 +1,15 @@
+<config>
+    <properties>
+        <audio value="95"/>
+        <speed value="1"/>
+        <shield value="0"/>
+    </properties>
+
+    <player_one>
+        <player character="knight" control="wasd" name="The Knight"/>
+    </player_one>
+
+    <player_two>
+        <player character="goblin" control="arrow_keys" name="The Goblin"/>
+    </player_two>
+</config>
