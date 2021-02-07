@@ -4,6 +4,6 @@
         down="DOWN"
         left="LEFT"
         right="RIGHT"
-        action="ENTER"
+        action="RETURN"
         switch="RCTRL"
 />
