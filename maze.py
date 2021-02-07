@@ -1,5 +1,8 @@
 """
-@author: daniel.fedotov
+@author: daniel.fedotov, vel.krol
+
+@structure and multiple path hack: daniel.fedotov
+@maze generation: vel.krol
 """
 
 from typing import List
@@ -63,8 +66,8 @@ class MazeBuilder:
         self.start_point = None
         self.height = h
         self.width = w
-        self.walls = []
-        self.maze = []  # So interpreter will know maze is a list
+        self.__walls = []
+        self.maze = []  # so interpreter will know maze is a list
         self.generate_maze()
 
     def generate_maze(self):
@@ -86,10 +89,10 @@ class MazeBuilder:
             starting_width -= 1
 
         self.maze[starting_height][starting_width] = self.__floor
-        self.walls.append([starting_height - 1, starting_width])
-        self.walls.append([starting_height, starting_width - 1])
-        self.walls.append([starting_height, starting_width + 1])
-        self.walls.append([starting_height + 1, starting_width])
+        self.__walls.append([starting_height - 1, starting_width])
+        self.__walls.append([starting_height, starting_width - 1])
+        self.__walls.append([starting_height, starting_width + 1])
+        self.__walls.append([starting_height + 1, starting_width])
 
         # Denote walls in maze
         self.maze[starting_height - 1][starting_width] = self.__wall
@@ -97,6 +100,7 @@ class MazeBuilder:
         self.maze[starting_height][starting_width + 1] = self.__wall
         self.maze[starting_height + 1][starting_width] = self.__wall
         self.__generate_path()
+        self.__create_new_paths()
 
     def __str__(self):
         mz_str = ""
@@ -117,13 +121,14 @@ class MazeBuilder:
 
     def __surrounding_cells(self, rand_wall):
         s_cells = 0
-        if self.maze[rand_wall[0] - 1][rand_wall[1]] == self.__floor:
+        y, x = rand_wall
+        if self.maze[y - 1][x] == self.__floor:
             s_cells += 1
-        if self.maze[rand_wall[0] + 1][rand_wall[1]] == self.__floor:
+        if self.maze[y + 1][x] == self.__floor:
             s_cells += 1
-        if self.maze[rand_wall[0]][rand_wall[1] - 1] == self.__floor:
+        if self.maze[y][x - 1] == self.__floor:
             s_cells += 1
-        if self.maze[rand_wall[0]][rand_wall[1] + 1] == self.__floor:
+        if self.maze[y][x + 1] == self.__floor:
             s_cells += 1
 
         return s_cells
@@ -219,40 +224,40 @@ class MazeBuilder:
         if rand_wall[0] != 0:
             if self.maze[rand_wall[0] - 1][rand_wall[1]] != self.__floor:
                 self.maze[rand_wall[0] - 1][rand_wall[1]] = self.__wall
-            if [rand_wall[0] - 1, rand_wall[1]] not in self.walls:
-                self.walls.append([rand_wall[0] - 1, rand_wall[1]])
+            if [rand_wall[0] - 1, rand_wall[1]] not in self.__walls:
+                self.__walls.append([rand_wall[0] - 1, rand_wall[1]])
 
     def __bottom_wall(self, rand_wall):
         if rand_wall[0] != self.height - 1:
             if self.maze[rand_wall[0] + 1][rand_wall[1]] != self.__floor:
                 self.maze[rand_wall[0] + 1][rand_wall[1]] = self.__wall
-            if [rand_wall[0] + 1, rand_wall[1]] not in self.walls:
-                self.walls.append([rand_wall[0] + 1, rand_wall[1]])
+            if [rand_wall[0] + 1, rand_wall[1]] not in self.__walls:
+                self.__walls.append([rand_wall[0] + 1, rand_wall[1]])
 
     def __right_wall(self, rand_wall):
         if rand_wall[1] != self.width - 1:
             if self.maze[rand_wall[0]][rand_wall[1] + 1] != self.__floor:
                 self.maze[rand_wall[0]][rand_wall[1] + 1] = self.__wall
-            if [rand_wall[0], rand_wall[1] + 1] not in self.walls:
-                self.walls.append([rand_wall[0], rand_wall[1] + 1])
+            if [rand_wall[0], rand_wall[1] + 1] not in self.__walls:
+                self.__walls.append([rand_wall[0], rand_wall[1] + 1])
 
     def __left_wall(self, rand_wall):
         if rand_wall[1] != 0:
             if self.maze[rand_wall[0]][rand_wall[1] - 1] != self.__floor:
                 self.maze[rand_wall[0]][rand_wall[1] - 1] = self.__wall
-            if [rand_wall[0], rand_wall[1] - 1] not in self.walls:
-                self.walls.append([rand_wall[0], rand_wall[1] - 1])
+            if [rand_wall[0], rand_wall[1] - 1] not in self.__walls:
+                self.__walls.append([rand_wall[0], rand_wall[1] - 1])
 
     def __delete_wall(self, rand_wall):
         # Delete the wall from the list anyway
-        for element in self.walls:
+        for element in self.__walls:
             if element[0] == rand_wall[0] and element[1] == rand_wall[1]:
-                self.walls.remove(element)
+                self.__walls.remove(element)
 
     def __generate_path(self):
-        while self.walls:
+        while self.__walls:
             # Pick a random wall
-            rand_wall = self.walls[int(random.random() * len(self.walls)) - 1]
+            rand_wall = self.__walls[int(random.random() * len(self.__walls)) - 1]
             #
             if self.__check_left_wall(rand_wall) \
                     or self.__check_upper_wall(rand_wall) \
@@ -284,4 +289,36 @@ class MazeBuilder:
                 self.start_point = i
                 break
 
-    # Print final maze
+    def __create_new_paths(self):
+        potential_breaches = []
+        for y in range(1, self.height - 1):
+            for x in range(1, self.width - 1):
+                if self.maze[y][x] == MazeBuilder.__wall:
+                    surround = self.__surrounding_cells((y, x))
+                    if surround == 2:
+                        potential_breaches.append((y, x))
+        self.__generate_breaches(potential_breaches, 40, 0, False)
+
+    def __mod_opposite(self, pos: tuple):
+        y, x = pos
+        opp_horizontal = self.maze[y][x - 1] == MazeBuilder.__floor and self.maze[y][x + 1] == MazeBuilder.__floor
+        opp_vertical = self.maze[y - 1][x] == MazeBuilder.__floor and self.maze[y + 1][x] == MazeBuilder.__floor
+        if opp_vertical or opp_horizontal:
+            return 0
+        return 50
+
+    def __generate_breaches(self, potential_breaches: list, percent: int, count: int, reverse_step: bool):
+        if potential_breaches:
+            if reverse_step:
+                potential_breach = potential_breaches[-1]
+            else:
+                potential_breach = potential_breaches[0]
+            y, x = potential_breach
+            rv = random.randrange(100)
+            if rv - 50 < percent:
+                mod = self.__mod_opposite(potential_breach)
+                if rv + mod < percent:
+                    self.maze[y][x] = MazeBuilder.__floor  # todo: should be any walkable surface
+                    percent -= 40 + count * 5
+            potential_breaches.remove(potential_breach)
+            self.__generate_breaches(potential_breaches, percent + 20, count + 1, not reverse_step)
