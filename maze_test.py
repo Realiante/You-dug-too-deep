@@ -17,7 +17,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual((1, 0), loaded.end_pos)
 
     def test_maze_gen_visual(self):
-        level = maze.MazeBuilder(12, 12)
+        level = maze.MazeBuilder(32, 32)
         print(level)
 
     if __name__ == '__main__':

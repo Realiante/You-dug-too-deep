@@ -8,6 +8,7 @@
 from typing import List
 from random import choice
 from tilescript import dictionary as tile_objects
+import math
 import random
 import colorama
 
@@ -289,23 +290,23 @@ class MazeBuilder:
                 self.start_point = i
                 break
 
+    def __opposite_floors(self, pos: tuple):
+        y, x = pos
+        opp_horizontal = self.maze[y][x - 1] == MazeBuilder.__floor and self.maze[y][x + 1] == MazeBuilder.__floor
+        opp_vertical = self.maze[y - 1][x] == MazeBuilder.__floor and self.maze[y + 1][x] == MazeBuilder.__floor
+        return opp_vertical or opp_horizontal
+
     def __create_new_paths(self):
         potential_breaches = []
         for y in range(1, self.height - 1):
             for x in range(1, self.width - 1):
                 if self.maze[y][x] == MazeBuilder.__wall:
                     surround = self.__surrounding_cells((y, x))
-                    if surround == 2:
+                    if surround == 2 and self.__opposite_floors((y, x)):
+                        # while currently the corners are ignored, maybe some time they can be appended too,
+                        # appending corners produced an interesting room generation effect, but was not pretty.
                         potential_breaches.append((y, x))
         self.__generate_breaches(potential_breaches, 40, 0, False)
-
-    def __mod_opposite(self, pos: tuple):
-        y, x = pos
-        opp_horizontal = self.maze[y][x - 1] == MazeBuilder.__floor and self.maze[y][x + 1] == MazeBuilder.__floor
-        opp_vertical = self.maze[y - 1][x] == MazeBuilder.__floor and self.maze[y + 1][x] == MazeBuilder.__floor
-        if opp_vertical or opp_horizontal:
-            return 0
-        return 50
 
     def __generate_breaches(self, potential_breaches: list, percent: int, count: int, reverse_step: bool):
         if potential_breaches:
@@ -315,10 +316,9 @@ class MazeBuilder:
                 potential_breach = potential_breaches[0]
             y, x = potential_breach
             rv = random.randrange(100)
-            if rv - 50 < percent:
-                mod = self.__mod_opposite(potential_breach)
-                if rv + mod < percent:
-                    self.maze[y][x] = MazeBuilder.__floor  # todo: should be any walkable surface
-                    percent -= 40 + count * 5
+            if rv < percent:
+                print(rv, " : vs : ", percent)
+                self.maze[y][x] = MazeBuilder.__floor  # todo: should be any walkable surface
+                percent -= 40 + count / math.sqrt(self.width * self.height)
             potential_breaches.remove(potential_breach)
             self.__generate_breaches(potential_breaches, percent + 20, count + 1, not reverse_step)
