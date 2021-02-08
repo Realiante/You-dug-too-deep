@@ -76,7 +76,7 @@ def __write_to_config():
 # menu initialization script
 # function environment to not bog up the global environment, returns the main menu
 def __create_menus():
-    ft_color = (200, 200, 200, 30)
+    ft_color = (0, 0, 0, 125)
 
     # main menu box
     start = __create_img_button(files.list_files(f"{images.img_dir}ui/start", images.img_formats))
