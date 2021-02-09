@@ -58,7 +58,8 @@ class MazeBuilder:
     __floor = 'f'
     __start = 'start'
     __wall = 'w'
-    # todo: __key = 'key' create a use for it in the future
+    __trap = 'trap'
+    __key = 'key'
     __end = 'end'
     __null = 'null'
 
@@ -102,6 +103,8 @@ class MazeBuilder:
         self.maze[starting_height + 1][starting_width] = self.__wall
         self.__generate_path()
         self.__create_new_paths()
+        self.__create_new_traps()
+        self.__create_key()
 
     def __str__(self):
         mz_str = ""
@@ -115,6 +118,10 @@ class MazeBuilder:
                     mz_str += colorama.Fore.CYAN + 'o' + " "
                 elif self.maze[i][j] == [self.__floor, self.__end]:
                     mz_str += colorama.Fore.CYAN + 'O' + " "
+                elif self.maze[i][j] == [self.__floor, self.__key]:
+                    mz_str += colorama.Fore.WHITE + 'K' + " "
+                elif self.maze[i][j] == self.__trap:
+                    mz_str += colorama.Fore.MAGENTA + 'T' + " "
                 else:
                     mz_str += colorama.Fore.RED + 'w' + " "
             mz_str += '\n'
@@ -317,8 +324,117 @@ class MazeBuilder:
             y, x = potential_breach
             rv = random.randrange(100)
             if rv < percent:
-                print(rv, " : vs : ", percent)
                 self.maze[y][x] = MazeBuilder.__floor  # todo: should be any walkable surface
                 percent -= 40 + count / math.sqrt(self.width * self.height)
             potential_breaches.remove(potential_breach)
             self.__generate_breaches(potential_breaches, percent + 20, count + 1, not reverse_step)
+
+    def __create_new_traps(self):
+        potential_breaches = []
+        for y in range(1, self.height - 1):
+            for x in range(1, self.width - 1):
+                if self.maze[y][x] == MazeBuilder.__floor:
+                    surround = self.__surrounding_cells((y, x))
+                    if surround == 2:
+                        potential_breaches.append((y, x))
+        self.__generate_traps(potential_breaches, 40, 0, False)
+
+    def __mod_opposite_traps(self, pos: tuple):
+        y, x = pos
+        opp_horizontal = self.maze[y][x - 1] == MazeBuilder.__trap and self.maze[y][x + 1] == MazeBuilder.__trap
+        opp_vertical = self.maze[y - 1][x] == MazeBuilder.__trap and self.maze[y + 1][x] == MazeBuilder.__trap
+        if opp_vertical or opp_horizontal:
+            return 0
+        return 50
+
+    def __generate_traps(self, potential_breaches: list, percent: int, count: int, reverse_step: bool):
+        if potential_breaches:
+            if reverse_step:
+                potential_breach = potential_breaches[-1]
+            else:
+                potential_breach = potential_breaches[0]
+            y, x = potential_breach
+            rv = random.randrange(100)
+            if rv - 50 < percent and not self.__is_surrounding_traps(y, x):
+                mod = self.__mod_opposite_traps(potential_breach)
+                if rv + mod < percent:
+                    self.maze[y][x] = MazeBuilder.__trap
+                    percent = 0
+            potential_breaches.remove(potential_breach)
+            self.__generate_traps(potential_breaches, percent + 10, count + 1, not reverse_step)
+
+    def __is_surrounding_traps(self, y, x):  # returns false if there's a trap and True if there are no traps
+        if x > 1:
+            if self.maze[y][x - 1] == self.__trap:  # left
+                return True
+            if y > 1 and self.maze[y - 1][x - 1] == self.__trap:  # top left
+                return True
+            if y < self.height - 2 and self.maze[y + 1][x - 1] == self.__trap:  # bottom left
+                return True
+        if y > 1 and self.maze[y - 1][x] == self.__trap:  # top
+            return True
+        if x < self.width - 2:
+            if self.maze[y][x + 1] == self.__trap:  # right
+                return True
+            if y > 1 and self.maze[y - 1][x + 1] == self.__trap:  # top right
+                return True
+            if y < self.height - 2 and self.maze[y + 1][x + 1] == self.__trap:  # bottom right
+                return True
+        if y < self.height - 2 and self.maze[y + 1][x] == self.__trap:  # bottom
+            return True
+
+    def __create_key(self):
+        from_start = []
+        steps_from_start = []
+        from_end = []
+        steps_from_end = []
+
+        self.__bfs_steps(from_start, steps_from_start, [self.height - 1, self.start_point])
+        self.__bfs_steps(from_end, steps_from_end, [0, self.end_point])
+
+        max_size = 0
+        max_node = []
+        for i in range(len(from_start)):
+            temp = from_end.index(from_start[i])
+            if steps_from_start[i][2] + steps_from_end[temp][2] > max_size:
+                max_size = steps_from_start[i][2] + steps_from_end[temp][2]
+                max_node = from_start[i]
+
+        self.maze[max_node[0]][max_node[1]] = [self.__floor, self.__key]
+
+    def __bfs_steps(self, visited: list, visited_steps: list, node: list):
+        queue = [node]
+        visited.append(node)
+        queue_steps = [[node[0], node[1], 0]]
+        visited_steps.append([node[0], node[1], 0])
+
+        while queue:
+            s = queue.pop(0)
+            q = queue_steps.pop(0)
+            graph = self.__get_surround(s)
+            for neighbour in graph:
+                if neighbour not in visited:
+                    visited.append(neighbour)
+                    visited_steps.append([neighbour[0], neighbour[1], q[2] + 1])
+                    queue.append(neighbour)
+                    queue_steps.append([neighbour[0], neighbour[1], q[2] + 1])
+        visited.pop(0)
+        visited_steps.pop(0)
+
+    def __get_surround(self, node):
+        lst = []
+        if node[0] > 1 and self.__is_walkable([node[0] - 1, node[1]]):
+            lst.append([node[0] - 1, node[1]])
+        if node[0] < self.height - 2 and self.__is_walkable([node[0] + 1, node[1]]):
+            lst.append([node[0] + 1, node[1]])
+        if node[1] > 1 and self.__is_walkable([node[0], node[1] - 1]):
+            lst.append([node[0], node[1] - 1])
+        if node[1] < self.width - 2 and self.__is_walkable([node[0], node[1] + 1]):
+            lst.append([node[0], node[1] + 1])
+        return lst
+
+    def __is_walkable(self, node):
+        if self.maze[node[0]][node[1]] == self.__floor or self.maze[node[0]][node[1]] == self.__trap \
+                or self.maze[node[0]][node[1]] == self.__key:
+            return True
+        return False
