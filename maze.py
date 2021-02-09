@@ -16,7 +16,7 @@ class MazeData:
         self.key_pos = 0, 0
         self.end_pos = 0, 0
         self.player_pos = 0, 0
-
+        self.max_cell_depth = 0
         self.grid = pattern.copy()
         self.__uniques = []
 
@@ -46,6 +46,7 @@ class MazeData:
                     if on_add is not None:
                         on_add(self, None, (x, y))
                     layer += 1
+                self.max_cell_depth = max(self.max_cell_depth, layer)
                 x += 1
             y += 1
 
