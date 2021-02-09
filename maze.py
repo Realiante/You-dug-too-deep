@@ -382,6 +382,7 @@ class MazeBuilder:
                 return True
         if y < self.height - 2 and self.maze[y + 1][x] == self.__trap:  # bottom
             return True
+        return False
 
     def __create_key(self):
         from_start = []
