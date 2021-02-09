@@ -3,21 +3,57 @@
 """
 import pygame
 import thorpy
-
+import tilescript
 import resources.images as images
 import resources.files as files
 import xml.dom.minidom as xml
 import os.path
+import copy
 import character
+import maze
 
 config_path = "config.xml"
-config_doc = xml.parse(os.path.abspath(config_path)).firstChild
-# todo: load player data for further use
+__config_doc = xml.parse(os.path.abspath(config_path)).firstChild
+__properties_doc = __config_doc.getElementsByTagName("properties")[0]
+__p1_doc = __config_doc.getElementsByTagName("player_one")[0].getElementsByTagName("player")[0]
+__p2_doc = __config_doc.getElementsByTagName("player_two")[0].getElementsByTagName("player")[0]
+__player1_data = character.CharacterData(doc=__p1_doc)
+__player2_data = character.CharacterData(doc=__p2_doc)
 
-player1_data = character.CharacterData(
-    doc=config_doc.getElementsByTagName("player_one")[0].getElementsByTagName("player")[0])
-player2_data = character.CharacterData(
-    doc=config_doc.getElementsByTagName("player_two")[0].getElementsByTagName("player")[0])
+
+# todo: modify player data from settings.
+# todo: figure how to properly start the game screen
+
+class GamePainter(thorpy.painters.painter.Painter):
+
+    def __init__(self, lvl: maze.MazeData, player: character.Character):
+        super(GamePainter, self).__init__((len(lvl.grid) * 16, len(lvl.grid[0]) * 16), clip=None)
+        # references to the GameElement's lvl and player parameters
+        self.lvl = lvl
+        self.player = player
+
+    def get_surface(self):
+        width, height = self.size
+        surface = pygame.Surface(self.size).convert()
+        for height_index in range(0, height // 16):
+            cur_height = height_index * 16
+            for width_index in range(0, width // 16):
+                cur_width = width_index * 16
+                for layer in self.lvl.grid[height_index][width_index]:
+                    tex_dist = tilescript.dictionary[layer][0]
+                    if tex_dist is not None:
+                        surface.blit(images.choose_by_weight(tex_dist), (cur_width, cur_height))
+        return surface
+
+
+class GameElement(thorpy.Element):
+
+    def __init__(self, lvl: maze.MazeData, player: character.Character):
+        super(GameElement, self).__init__(finish=False)
+        self.lvl = copy.copy(lvl)
+        self.player = player
+        self.set_painter(GamePainter(self.lvl, self.player))
+        self.finish()
 
 
 class BackgroundPainter(thorpy.painters.painter.Painter):
@@ -54,7 +90,7 @@ def __create_img_button(image_paths: tuple):
 
 
 def __set_slider_from_property(prop: str, ll: int, ul: int):
-    values_element = config_doc.getElementsByTagName("properties")[0]
+    values_element = __config_doc.getElementsByTagName("properties")[0]
     prop_element = values_element.getElementsByTagName(prop)[0]
     attribute_value = prop_element.getAttribute("value")
     value = int(attribute_value)
@@ -62,15 +98,22 @@ def __set_slider_from_property(prop: str, ll: int, ul: int):
 
 
 def __save_properties_to_xml(*props: tuple):
-    values_element = config_doc.getElementsByTagName("properties")[0]
     for prop in props:
-        prop_element = values_element.getElementsByTagName(prop[0])[0]
-        prop_element.setAttribute(attname="value", value=str(prop[1]))
+        attr, value = prop
+        prop_element = __properties_doc.getElementsByTagName(attr)[0]
+        prop_element.setAttribute(attname="value", value=str(value))
 
 
 def __write_to_config():
     with open(config_path, mode='w', encoding="UTF-8") as file:
-        file.write(config_doc.toxml())
+        file.write(__config_doc.toxml())
+
+
+def __get_properties():
+    audio = __properties_doc.getElementsByTagName("audio")[0]
+    speed = __properties_doc.getElementsByTagName("speed")[0]
+    shield = __properties_doc.getElementsByTagName("shield")[0]
+    return audio, speed, shield
 
 
 # menu initialization script
@@ -80,7 +123,6 @@ def __create_menus():
 
     # main menu box
     start = __create_img_button(files.list_files(f"{images.img_dir}ui/start", images.img_formats))
-    start.user_func = __start_game
     config = __create_img_button(files.list_files(f"{images.img_dir}ui/config", images.img_formats))
     escape = __create_img_button(files.list_files(f"{images.img_dir}ui/exit", images.img_formats))
     escape.user_func = __exit
@@ -107,11 +149,23 @@ def __create_menus():
     cm_box.center()
     config_launcher = thorpy.set_launcher(config, BackgroundElement(elements=[cm_box]))
     main_menu = thorpy.Menu(mm_bg)
+
+    # game box
+    empty_game_text = thorpy.make_text("No game loaded!")
+    game_box = thorpy.Box.make(elements=[empty_game_text])
+
+    def start_game():
+        properties = __get_properties()
+        game_box.remove_all_elements()
+        lvl_gen = maze.MazeBuilder(25, 25)  # todo: should probably keep an instance of the maze builder
+        lvl = maze.MazeData(lvl_gen.maze)
+        player = __player1_data.create_character(properties[1], properties[2])  # todo: load both players.
+        game_box.add_element(GameElement(lvl, player))
+
+    start.user_func = start_game
+    thorpy.set_launcher(start, BackgroundElement(elements=[game_box]))
+
     return main_menu
-
-
-def __start_game():
-    pass  # todo: when the game is in
 
 
 def __exit():
