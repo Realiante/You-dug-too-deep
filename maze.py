@@ -77,7 +77,7 @@ class MazeBuilder:
         for _ in range(0, self.height):
             line = []
             for _ in range(0, self.width):
-                line.append(self.__null)
+                line.append(MazeBuilder.__null)
             self.maze.append(line)
         starting_height = int(random.random() * self.height)
         starting_width = int(random.random() * self.width)
@@ -90,17 +90,17 @@ class MazeBuilder:
         if starting_width == self.width - 1:
             starting_width -= 1
 
-        self.maze[starting_height][starting_width] = self.__floor
+        self.maze[starting_height][starting_width] = MazeBuilder.__floor
         self.__walls.append([starting_height - 1, starting_width])
         self.__walls.append([starting_height, starting_width - 1])
         self.__walls.append([starting_height, starting_width + 1])
         self.__walls.append([starting_height + 1, starting_width])
 
         # Denote walls in maze
-        self.maze[starting_height - 1][starting_width] = self.__wall
-        self.maze[starting_height][starting_width - 1] = self.__wall
-        self.maze[starting_height][starting_width + 1] = self.__wall
-        self.maze[starting_height + 1][starting_width] = self.__wall
+        self.maze[starting_height - 1][starting_width] = MazeBuilder.__wall
+        self.maze[starting_height][starting_width - 1] = MazeBuilder.__wall
+        self.maze[starting_height][starting_width + 1] = MazeBuilder.__wall
+        self.maze[starting_height + 1][starting_width] = MazeBuilder.__wall
         self.__generate_path()
         self.__create_new_paths()
         self.__create_new_traps()
@@ -110,17 +110,17 @@ class MazeBuilder:
         mz_str = ""
         for i in range(0, self.height):
             for j in range(0, self.width):
-                if self.maze[i][j] == self.__null:
+                if self.maze[i][j] == MazeBuilder.__null:
                     mz_str += colorama.Fore.WHITE + '#' + " "
-                elif self.maze[i][j] == self.__floor:
+                elif self.maze[i][j] == MazeBuilder.__floor:
                     mz_str += colorama.Fore.GREEN + 'f' + " "
-                elif self.maze[i][j] == [self.__floor, self.__start]:
+                elif self.maze[i][j] == [MazeBuilder.__floor, MazeBuilder.__start]:
                     mz_str += colorama.Fore.CYAN + 'o' + " "
-                elif self.maze[i][j] == [self.__floor, self.__end]:
+                elif self.maze[i][j] == [MazeBuilder.__floor, MazeBuilder.__end]:
                     mz_str += colorama.Fore.CYAN + 'O' + " "
-                elif self.maze[i][j] == [self.__floor, self.__key]:
+                elif self.maze[i][j] == [MazeBuilder.__floor, MazeBuilder.__key]:
                     mz_str += colorama.Fore.WHITE + 'K' + " "
-                elif self.maze[i][j] == self.__trap:
+                elif self.maze[i][j] == MazeBuilder.__trap:
                     mz_str += colorama.Fore.MAGENTA + 'T' + " "
                 else:
                     mz_str += colorama.Fore.RED + 'w' + " "
@@ -130,25 +130,25 @@ class MazeBuilder:
     def __surrounding_cells(self, rand_wall):
         s_cells = 0
         y, x = rand_wall
-        if self.maze[y - 1][x] == self.__floor:
+        if self.maze[y - 1][x] == MazeBuilder.__floor:
             s_cells += 1
-        if self.maze[y + 1][x] == self.__floor:
+        if self.maze[y + 1][x] == MazeBuilder.__floor:
             s_cells += 1
-        if self.maze[y][x - 1] == self.__floor:
+        if self.maze[y][x - 1] == MazeBuilder.__floor:
             s_cells += 1
-        if self.maze[y][x + 1] == self.__floor:
+        if self.maze[y][x + 1] == MazeBuilder.__floor:
             s_cells += 1
 
         return s_cells
 
     def __check_left_wall(self, rand_wall):
-        if (rand_wall[1] != 0) and (self.maze[rand_wall[0]][rand_wall[1] - 1] == self.__null
-                                    and self.maze[rand_wall[0]][rand_wall[1] + 1] == self.__floor):
+        if (rand_wall[1] != 0) and (self.maze[rand_wall[0]][rand_wall[1] - 1] == MazeBuilder.__null
+                                    and self.maze[rand_wall[0]][rand_wall[1] + 1] == MazeBuilder.__floor):
             # Find the number of surrounding cells
             s_cells = self.__surrounding_cells(rand_wall)
             if s_cells < 2:
                 # Denote the new path
-                self.maze[rand_wall[0]][rand_wall[1]] = self.__floor
+                self.maze[rand_wall[0]][rand_wall[1]] = MazeBuilder.__floor
 
                 # Mark the new walls
                 # Upper cell
@@ -165,12 +165,12 @@ class MazeBuilder:
         return False
 
     def __check_upper_wall(self, rand_wall):
-        if (rand_wall[0] != 0) and (self.maze[rand_wall[0] - 1][rand_wall[1]] == self.__null
-                                    and self.maze[rand_wall[0] + 1][rand_wall[1]] == self.__floor):
+        if (rand_wall[0] != 0) and (self.maze[rand_wall[0] - 1][rand_wall[1]] == MazeBuilder.__null
+                                    and self.maze[rand_wall[0] + 1][rand_wall[1]] == MazeBuilder.__floor):
             s_cells = self.__surrounding_cells(rand_wall)
             if s_cells < 2:
                 # Denote the new path
-                self.maze[rand_wall[0]][rand_wall[1]] = self.__floor
+                self.maze[rand_wall[0]][rand_wall[1]] = MazeBuilder.__floor
 
                 # Mark the new walls
                 # Upper cell
@@ -189,13 +189,13 @@ class MazeBuilder:
         return False
 
     def __check_bottom_wall(self, rand_wall):
-        if (rand_wall[0] != self.height - 1) and (self.maze[rand_wall[0] + 1][rand_wall[1]] == self.__null
-                                                  and self.maze[rand_wall[0] - 1][rand_wall[1]] == self.__floor):
+        if (rand_wall[0] != self.height - 1) and (self.maze[rand_wall[0] + 1][rand_wall[1]] == MazeBuilder.__null
+                                                  and self.maze[rand_wall[0] - 1][rand_wall[1]] == MazeBuilder.__floor):
 
             s_cells = self.__surrounding_cells(rand_wall)
             if s_cells < 2:
                 # Denote the new path
-                self.maze[rand_wall[0]][rand_wall[1]] = self.__floor
+                self.maze[rand_wall[0]][rand_wall[1]] = MazeBuilder.__floor
 
                 # Mark the new walls
                 self.__bottom_wall(rand_wall)
@@ -209,13 +209,13 @@ class MazeBuilder:
         return False
 
     def __check_right_wall(self, rand_wall):
-        if (rand_wall[1] != self.width - 1) and (self.maze[rand_wall[0]][rand_wall[1] + 1] == self.__null
-                                                 and self.maze[rand_wall[0]][rand_wall[1] - 1] == self.__floor):
+        if (rand_wall[1] != self.width - 1) and (self.maze[rand_wall[0]][rand_wall[1] + 1] == MazeBuilder.__null
+                                                 and self.maze[rand_wall[0]][rand_wall[1] - 1] == MazeBuilder.__floor):
 
             s_cells = self.__surrounding_cells(rand_wall)
             if s_cells < 2:
                 # Denote the new path
-                self.maze[rand_wall[0]][rand_wall[1]] = self.__floor
+                self.maze[rand_wall[0]][rand_wall[1]] = MazeBuilder.__floor
 
                 # Mark the new walls
                 self.__right_wall(rand_wall)
@@ -230,29 +230,29 @@ class MazeBuilder:
 
     def __upper_wall(self, rand_wall):
         if rand_wall[0] != 0:
-            if self.maze[rand_wall[0] - 1][rand_wall[1]] != self.__floor:
-                self.maze[rand_wall[0] - 1][rand_wall[1]] = self.__wall
+            if self.maze[rand_wall[0] - 1][rand_wall[1]] != MazeBuilder.__floor:
+                self.maze[rand_wall[0] - 1][rand_wall[1]] = MazeBuilder.__wall
             if [rand_wall[0] - 1, rand_wall[1]] not in self.__walls:
                 self.__walls.append([rand_wall[0] - 1, rand_wall[1]])
 
     def __bottom_wall(self, rand_wall):
         if rand_wall[0] != self.height - 1:
-            if self.maze[rand_wall[0] + 1][rand_wall[1]] != self.__floor:
-                self.maze[rand_wall[0] + 1][rand_wall[1]] = self.__wall
+            if self.maze[rand_wall[0] + 1][rand_wall[1]] != MazeBuilder.__floor:
+                self.maze[rand_wall[0] + 1][rand_wall[1]] = MazeBuilder.__wall
             if [rand_wall[0] + 1, rand_wall[1]] not in self.__walls:
                 self.__walls.append([rand_wall[0] + 1, rand_wall[1]])
 
     def __right_wall(self, rand_wall):
         if rand_wall[1] != self.width - 1:
-            if self.maze[rand_wall[0]][rand_wall[1] + 1] != self.__floor:
-                self.maze[rand_wall[0]][rand_wall[1] + 1] = self.__wall
+            if self.maze[rand_wall[0]][rand_wall[1] + 1] != MazeBuilder.__floor:
+                self.maze[rand_wall[0]][rand_wall[1] + 1] = MazeBuilder.__wall
             if [rand_wall[0], rand_wall[1] + 1] not in self.__walls:
                 self.__walls.append([rand_wall[0], rand_wall[1] + 1])
 
     def __left_wall(self, rand_wall):
         if rand_wall[1] != 0:
-            if self.maze[rand_wall[0]][rand_wall[1] - 1] != self.__floor:
-                self.maze[rand_wall[0]][rand_wall[1] - 1] = self.__wall
+            if self.maze[rand_wall[0]][rand_wall[1] - 1] != MazeBuilder.__floor:
+                self.maze[rand_wall[0]][rand_wall[1] - 1] = MazeBuilder.__wall
             if [rand_wall[0], rand_wall[1] - 1] not in self.__walls:
                 self.__walls.append([rand_wall[0], rand_wall[1] - 1])
 
@@ -276,24 +276,23 @@ class MazeBuilder:
 
         for i in range(0, self.height):
             for j in range(0, self.width):
-                if self.maze[i][j] == self.__null:
-                    self.maze[i][j] = self.__wall
+                if self.maze[i][j] == MazeBuilder.__null:
+                    self.maze[i][j] = MazeBuilder.__wall
         self.__create_end()
         self.__create_start()
 
     def __create_end(self):
-        while True:
-            i = random.randrange(self.width)
-            if self.maze[1][i] == self.__floor:
-                self.maze[0][i] = [self.__floor, self.__end]
+        for i in range(self.width - 1, 0, -1):
+            if self.maze[1][i] == MazeBuilder.__floor:
+                self.maze[0][i] = [MazeBuilder.__floor, MazeBuilder.__end]
                 self.end_point = i
+
                 break
 
     def __create_start(self):
-        while True:
-            i = random.randrange(self.width)
-            if self.maze[self.height - 2][i] == self.__floor:
-                self.maze[self.height - 1][i] = [self.__floor, self.__start]
+        for i in range(self.width):
+            if self.maze[self.height - 2][i] == MazeBuilder.__floor:
+                self.maze[self.height - 1][i] = [MazeBuilder.__floor, MazeBuilder.__start]
                 self.start_point = i
                 break
 
@@ -363,25 +362,12 @@ class MazeBuilder:
             potential_breaches.remove(potential_breach)
             self.__generate_traps(potential_breaches, percent + 10, count + 1, not reverse_step)
 
-    def __is_surrounding_traps(self, y, x):  # returns false if there's a trap and True if there are no traps
-        if x > 1:
-            if self.maze[y][x - 1] == self.__trap:  # left
-                return True
-            if y > 1 and self.maze[y - 1][x - 1] == self.__trap:  # top left
-                return True
-            if y < self.height - 2 and self.maze[y + 1][x - 1] == self.__trap:  # bottom left
-                return True
-        if y > 1 and self.maze[y - 1][x] == self.__trap:  # top
-            return True
-        if x < self.width - 2:
-            if self.maze[y][x + 1] == self.__trap:  # right
-                return True
-            if y > 1 and self.maze[y - 1][x + 1] == self.__trap:  # top right
-                return True
-            if y < self.height - 2 and self.maze[y + 1][x + 1] == self.__trap:  # bottom right
-                return True
-        if y < self.height - 2 and self.maze[y + 1][x] == self.__trap:  # bottom
-            return True
+    def __is_surrounding_traps(self, y, x):  # returns True if there's a trap and False if there are no traps
+        for i in range(-1, 1):  # i for x
+            for j in range(-1, 1):  # j for y
+                if 1 < x + i < self.width - 2 and 1 < y + j < self.height - 2 \
+                        and self.maze[y + j][x + i] == MazeBuilder.__trap:
+                    return True
         return False
 
     def __create_key(self):
@@ -401,7 +387,7 @@ class MazeBuilder:
                 max_size = steps_from_start[i][2] + steps_from_end[temp][2]
                 max_node = from_start[i]
 
-        self.maze[max_node[0]][max_node[1]] = [self.__floor, self.__key]
+        self.maze[max_node[0]][max_node[1]] = [MazeBuilder.__floor, MazeBuilder.__key]
 
     def __bfs_steps(self, visited: list, visited_steps: list, node: list):
         queue = [node]
@@ -435,7 +421,7 @@ class MazeBuilder:
         return lst
 
     def __is_walkable(self, node):
-        if self.maze[node[0]][node[1]] == self.__floor or self.maze[node[0]][node[1]] == self.__trap \
-                or self.maze[node[0]][node[1]] == self.__key:
+        if self.maze[node[0]][node[1]] == MazeBuilder.__floor or self.maze[node[0]][node[1]] == MazeBuilder.__trap \
+                or self.maze[node[0]][node[1]] == MazeBuilder.__key:
             return True
         return False
