@@ -32,10 +32,10 @@ class SingleResourceCase(unittest.TestCase):
 
     def test_load_prebuilt(self):
         test_pattern = levels.load_pattern("maze_test")
-        self.assertEqual(["end"], test_pattern[0][0])
+        self.assertEqual(["f", "end"], test_pattern[0][0])
         self.assertEqual(["f"], test_pattern[1][0])
-        self.assertEqual(["key"], test_pattern[2][6])
-        self.assertEqual(["start"], test_pattern[6][1])
+        self.assertEqual(["f", "key"], test_pattern[2][6])
+        self.assertEqual(["f", "start"], test_pattern[6][1])
         self.assertEqual(["f"], test_pattern[9][9])
 
     def test_load_broken_prebuilt(self):
