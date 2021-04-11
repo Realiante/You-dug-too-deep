@@ -5,7 +5,6 @@
 import os
 import random
 import resources.files
-
 import pygame
 
 img_dir = f"resources/images/"
@@ -21,14 +20,15 @@ def load_img(image_path: str):
     return __img_dict[image_path]
 
 
-def load_directory(directory: str):
+# Returns a weighted image list without a need for requirements.txt
+def load_directory_equal(directory: str):
     dir_path = f"{img_dir}{directory}"
     file_names = resources.files.list_files(dir_path, img_formats)
-    images = []
+    images = {}
     for file_name in file_names:
         file_path = file_name[len(img_dir):]
-        images.append(load_img(file_path))
-    return (*images,)  # unwraps the list into a tuple
+        images[load_img(file_path)] = 1
+    return images  # unwraps the list into a tuple
 
 
 def __parse_weight_list(weight_path: str):
@@ -44,12 +44,14 @@ def __parse_weight_list(weight_path: str):
 
 def load_weighted_images(directory: str):
     weight_path = f"{img_dir}{directory}/weight.txt"
-    weights = __parse_weight_list(weight_path)
-    weighted_images = {}
-    for img_name in weights.keys():
-        image = load_img(f"{directory}/{img_name}")
-        weighted_images[image] = weights[img_name]
-    return weighted_images
+    if os.path.exists(weight_path):
+        weights = __parse_weight_list(weight_path)
+        weighted_images = {}
+        for img_name in weights.keys():
+            image = load_img(f"{directory}/{img_name}")
+            weighted_images[image] = weights[img_name]
+        return weighted_images
+    return load_directory_equal(directory)
 
 
 def choose_by_weight(weights: dict):
