@@ -39,10 +39,10 @@ def __effect_on_set_end(maze, character, pos):
 # [4] is this a base tile? Base tiles will be ignored if attempt is made to load them after the first layer
 # [5] is this tile unique? When second instance of this tile is encountered it will be ignored.
 dictionary = {
-    'f': (images.load_directory("tex/floor"), 0, None, None, True, False),
+    'f': (images.load_weighted_images("tex/floor"), 0, None, None, True, False),
     'start': (None, 0, None, __effect_on_set_player, False, True),
-    'w': (images.load_directory("tex/wall"), 999, None, None, True, False),
-    'key': ((images.load_img("tex/key.png"),), -3, __effect_key, __effect_on_set_key, False, True),
-    'end': ((images.load_img("tex/door.png"),), 0, __effect_win, __effect_on_set_end, False, True),
-    'trap': ((images.load_img("tex/trap.png"),), 2, __effect_damage_light, None, True, False)
+    'w': (images.load_weighted_images("tex/wall"), 999, None, None, True, False),
+    'key': (images.load_directory_equal("tex/key"), -3, __effect_key, __effect_on_set_key, False, True),
+    'end': (images.load_directory_equal("tex/door"), 0, __effect_win, __effect_on_set_end, False, True),
+    'trap': (images.load_directory_equal("tex/trap"), 2, __effect_damage_light, None, True, False)
 }

@@ -16,7 +16,10 @@ class SingleResourceCase(unittest.TestCase):
         self.assertEqual((16, 16), test_img.get_size())
 
     def test_load_img_dir_floor(self):
-        images.load_directory("tex/floor")
+        equal = images.load_directory_equal("tex/floor")
+        weighted = images.load_weighted_images("tex/floor")
+        self.assertEqual(len(equal), len(weighted))
+        self.assertEqual(equal.keys(), weighted.keys())
 
     def test_load_scheme_wasd(self):
         test_scheme_wasd = schemes.load_scheme("wasd")

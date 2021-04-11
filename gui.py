@@ -3,6 +3,7 @@
 """
 import pygame
 import thorpy
+import maze
 
 import resources.images as images
 import resources.files as files
@@ -110,8 +111,51 @@ def __create_menus():
     return main_menu
 
 
+def __create_img(image_path: str):
+    return thorpy.Image(path=image_path)
+
+
 def __start_game():
-    pass  # todo: when the game is in
+    height, width = 12, 12
+    mz = maze.MazeBuilder(height, width)
+    row = []
+    for y in range(height):
+        for x in range(width):
+            if mz.get_type(x, y) == 'f':
+                row.append(__create_img(images.choose_by_weight(images.load_weighted_images("tex/floor"))))
+            elif mz.get_type(x, y) == 'start' or mz.get_type(x, y) == 'end':
+                row.append(__create_img(images.load_img("tex/door.png")))
+            elif mz.get_type(x, y) == 'w':
+                row.append(__create_img(images.choose_by_weight(images.load_weighted_images("tex/wall"))))
+            elif mz.get_type(x, y) == 'trap':
+                row.append(__create_img(images.load_img("tex/trap.png")))
+            elif mz.get_type(x, y) == 'key':
+                row.append(__create_img(images.load_img("tex/key.png")))
+
+    boxes = []
+    count = 0
+
+    ft_color = (0, 0, 0, 150)
+    while count < width * height:
+        boxes.append(thorpy.Box.make(row[count:count + width]))
+        count += width
+
+    for box in boxes:
+        thorpy.store(box, mode="h")
+        box.fit_children()
+        box.set_main_color((0, 0, 0, 0))
+        box.center()
+        print(box)
+
+    box_all = thorpy.Box.make(boxes)
+    box_all.center()
+    box_all.set_main_color(ft_color)
+
+    gm_bg = BackgroundElement(elements=[box_all])
+
+    game_screen = thorpy.Menu(gm_bg)
+
+    game_screen.play()
 
 
 def __exit():
