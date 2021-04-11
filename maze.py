@@ -114,11 +114,11 @@ class MazeBuilder:
                     mz_str += colorama.Fore.WHITE + '#' + " "
                 elif self.maze[i][j] == MazeBuilder.__floor:
                     mz_str += colorama.Fore.GREEN + 'f' + " "
-                elif self.maze[i][j] == [MazeBuilder.__floor, MazeBuilder.__start]:
+                elif self.maze[i][j] == MazeBuilder.__start:
                     mz_str += colorama.Fore.CYAN + 'o' + " "
-                elif self.maze[i][j] == [MazeBuilder.__floor, MazeBuilder.__end]:
+                elif self.maze[i][j] == MazeBuilder.__end:
                     mz_str += colorama.Fore.CYAN + 'O' + " "
-                elif self.maze[i][j] == [MazeBuilder.__floor, MazeBuilder.__key]:
+                elif self.maze[i][j] == MazeBuilder.__key:
                     mz_str += colorama.Fore.WHITE + 'K' + " "
                 elif self.maze[i][j] == MazeBuilder.__trap:
                     mz_str += colorama.Fore.MAGENTA + 'T' + " "
@@ -284,7 +284,7 @@ class MazeBuilder:
     def __create_end(self):
         for i in range(self.width - 1, 0, -1):
             if self.maze[1][i] == MazeBuilder.__floor:
-                self.maze[0][i] = [MazeBuilder.__floor, MazeBuilder.__end]
+                self.maze[0][i] = MazeBuilder.__end
                 self.end_point = i
 
                 break
@@ -292,7 +292,7 @@ class MazeBuilder:
     def __create_start(self):
         for i in range(self.width):
             if self.maze[self.height - 2][i] == MazeBuilder.__floor:
-                self.maze[self.height - 1][i] = [MazeBuilder.__floor, MazeBuilder.__start]
+                self.maze[self.height - 1][i] = MazeBuilder.__start
                 self.start_point = i
                 break
 
@@ -387,7 +387,7 @@ class MazeBuilder:
                 max_size = steps_from_start[i][2] + steps_from_end[temp][2]
                 max_node = from_start[i]
 
-        self.maze[max_node[0]][max_node[1]] = [MazeBuilder.__floor, MazeBuilder.__key]
+        self.maze[max_node[0]][max_node[1]] = MazeBuilder.__key
 
     def __bfs_steps(self, visited: list, visited_steps: list, node: list):
         queue = [node]
@@ -425,3 +425,6 @@ class MazeBuilder:
                 or self.maze[node[0]][node[1]] == MazeBuilder.__key:
             return True
         return False
+
+    def get_type(self, x, y):
+        return self.maze[y][x]
